@@ -13,6 +13,10 @@
 
 ptr             equ $06
 
+*** const ***
+topmargin       equ 70
+leftmargin      equ 10
+charindex       equ $0040
 
 * calculate a glyph size (in bytes) 
 * glyphsize/glyphsize+1 = gwidth * gheight
@@ -20,36 +24,36 @@ ptr             equ $06
                 sta glyphsize
                 sta glyphsize+1
 
-                ldx gheight 
+                ldx gwidth 
 *<sym>
 calcsize        lda glyphsize
                 clc 
-                adc gwidth
+                adc gheight 
                 sta glyphsize
                 lda #0
                 adc glyphsize+1
                 sta glyphsize+1
                 dex 
                 bne calcsize
-*
+
 * init vars
-                lda #70                         ; init top margin
+*<bp>
+                lda #topmargin                  ; init top margin
                 sta line
                 clc 
                 adc gheight
                 sta maxv
 
-                lda #10                         ; init left margin
+                lda #leftmargin                         ; init left margin
                 sta rowcnt
-                sta leftmargin
                 clc
                 adc gwidth
                 sta maxh 
 
 *<sym>
 the_glyph
-                lda #$40                       ; glyph index in A,X (A = low byte, X = hi byte)
-                ldx #$0
+                lda #<charindex                 ; glyph index in A,X (A = low byte, X = hi byte)
+                ldx #>charindex
                 jsr getgaddr                    ; calculte strating address of glyph data 
                                                 ; and make gindex/gindex+1 point to it
                 ;jsr printglyph
@@ -175,8 +179,6 @@ noinc02
                 bne nextline            ; end of line loop
                 jmp shapeloop
 
-
-
 ***************************************************************************
 * Copy glyph bitmap data to gbuffer, insert 0 at the end of each line.
 * This 0 byte is needed when glyph is shifted.
@@ -268,7 +270,7 @@ noinc2
                 cmp tempo
                 bne gdata           ; no loop
 
-                lda leftmargin          ; reset col.
+                lda #leftmargin         ; reset col.
                 sta rowcnt
                 inc line                ; next line 
                 lda line                ; 
@@ -356,7 +358,7 @@ noinc
                 cmp maxh
                 bne display             ; no loop
 
-                lda leftmargin          ; reset col.
+                lda #leftmargin          ; reset col.
                 sta rowcnt
                 inc line                ; next line 
                 lda line                ; 
@@ -364,10 +366,6 @@ noinc
                 bne display             ; no : loop
                       
                 rts
-
-*<sym>
-leftmargin      ds 1
-
 *<sym>
 maxh            ds 1
 
