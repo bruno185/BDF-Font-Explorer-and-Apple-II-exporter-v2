@@ -64,39 +64,41 @@ the_glyph
 
 *<sym>
 shapeindex   
-                lda #70                         ; init top margin
+                lda #topmargin                  ; init top margin
                 sta line
-indexsh         lda #0                         ; shape # in A
+
+indexsh         lda #0                          ; shape # in A
 dopsh
                 jsr printshglyph                ; print pre shifted glyph 
 
-nokey
-                lda kbd		                ; check for key press
+nokey           lda kbd		                ; check for key press
                 bpl nokey		        ; if none, continue waiting
-                bit kbdstrb     ; clear kbd
-                lda indexsh+1
+                bit kbdstrb                     ; clear kbd
+                lda indexsh+1                   ; get shape #
                 inc 
-                cmp #7
-                beq finprg
-                sta indexsh+1
-                jmp shapeindex
+                cmp #7                          ; = 7 ?
+                beq finprg                      ; yes : exit
+                sta indexsh+1                   ; no : inc
+                jmp shapeindex                  ; and loop
 
 finprg          rts
 
 
 ***************************************************************************
 * pre shift glypg
-* first gshape (not shifted glyph) is already at gbuffer location.
-* a table of shapes addresses is built at shift_tbl location.
+* input : first glyph shape (shape 0, not shifted glyph) is already at gbuffer location.
+* claculate 6 other postions of glyph
+* a table of shapes addresses is built on the fly at shift_tbl location.
+
 *<sym>
 shift 
                 lda #0                  ; shift counter
                 sta shapes
                 
                 lda #<gbuffer           ; set glyph input address (= copied glyph)
-                sta inputb+1
+                sta inputb+1            ; set address of byte to load (modify code)
                 sta tempo
-                sta shift_tbl           ; first shape already at gbuffer
+                sta shift_tbl           ; set firt address of shapes table
                 lda #>gbuffer
                 sta inputb+2
                 sta tempo+1
@@ -114,23 +116,23 @@ doadd           lda gheight
                 dex 
                 bne doadd
 
-                lda tempo                ; set ouput address, just after glyph
+                lda tempo                ; set ouput address, just after glyph (by code modifying)
                 sta ouputb+1
                 lda tempo+1
                 sta ouputb+2
 
 *<sym>
 shapeloop
-                inc shapes              ; now start second shape 
+                inc shapes              ; next shape 
                 lda shapes
-                cmp #7
-                bne goshape
-                rts
+                cmp #7                  ; all shapes done ?
+                bne goshape             ; no, go on
+                rts                     ; yes : exit 
 *<sym>
 goshape
-                asl
+                asl                     ; shap index * 2 to get offset in shapes table
                 tax 
-                lda ouputb+1
+                lda ouputb+1            ; 
                 sta shift_tbl,x 
                 inx 
                 lda ouputb+2
@@ -161,12 +163,12 @@ inputb          lda $FFFF               ; get byte to shift
 *<sym>       
 ouputb          sta $FFFF
 
-                inc inputb+1            ; update input and output code
+                inc inputb+1            ; update input code
                 bne noinc01
                 inc inputb+2
 *<sym>
 noinc01
-                inc ouputb+1
+                inc ouputb+1            ; update output code
                 bne noinc02
                 inc ouputb+2
 *<sym>
@@ -234,19 +236,19 @@ storbyte0       sta $FFFF
 * input : a = index of shape
 *<sym>
 printshglyph 
-                asl
-                tax
+                asl                     ; get shape # * 2
+                tax                     ; = offset in shapes table
                 lda shift_tbl,x 
-                sta gdata+1
+                sta gdata+1             ; modifiy code 
                 inx 
                 lda shift_tbl,x 
                 sta gdata+2
 
-                lda maxh
+                lda maxh                ; + 1 byte for shifting
                 inc
                 sta tempo
 
-gdata           lda $FFFF
+gdata           lda $FFFF               ; modified load address
                 pha                     ; save data byte
                 
                 ldx line                ; get screen address
@@ -257,25 +259,25 @@ gdata           lda $FFFF
 
                 pla                     ; restore data byte
 
-                ldy rowcnt              ; set column 
-                ora (ptr),y  
+                ldy rowcnt              ; set column (horizontal offset)
+                ;ora (ptr),y            ; uncoment o preserve background
                 sta (ptr),y             ; put byte on screen
 
                 inc rowcnt              ; next column
-                inc gdata+1
+                inc gdata+1             ; prepare next data byte to load
                 bne noinc2
                 inc gdata+2
 noinc2
-                lda rowcnt              ; colomn = leftmargin + glyph width ?
+                lda rowcnt              ; colomn = leftmargin + glyph width +1 ?
                 cmp tempo
-                bne gdata           ; no loop
+                bne gdata               ; no loop to finish row
 
                 lda #leftmargin         ; reset col.
                 sta rowcnt
                 inc line                ; next line 
                 lda line                ; 
                 cmp maxv                ; line = top margin + glyph heignt ?
-                bne gdata             ; no : loop
+                bne gdata               ; no : loop
                       
                 rts
 

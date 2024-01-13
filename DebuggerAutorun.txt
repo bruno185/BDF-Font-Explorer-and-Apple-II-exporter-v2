@@ -1,7 +1,7 @@
 bp 4020
 bp 403F
-m1 73C2
-m2 4239
+m1 73C0
+m2 4237
 sym calcsize = 400B
 sym the_glyph = 4038
 sym shapeindex = 4045
@@ -16,26 +16,26 @@ sym copyglyph = 40F8
 sym movegg = 4111
 sym moveg = 4114
 sym printshglyph = 414A
-sym getgaddr = 419D
-sym setbaseaddress = 41AB
-sym notZ = 41CE
-sym next1 = 41D4
-sym printglyph = 41E6
-sym maxh = 422F
-sym maxv = 4230
-sym rowcnt = 4231
-sym line = 4232
-sym dataptr = 4233
-sym gindex = 4235
-sym gindexcnt = 4237
-sym glyphsize = 4239
-sym tempo = 423B
-sym shapes = 423D
-sym hi = 423E
-sym lo = 42FE
-sym numglyph = 43BE
-sym gwidth = 43C0
-sym gheight = 43C1
-sym font = 43C2
-sym shift_tbl = 73C2
-sym ozunid_1 = 73D0
+sym getgaddr = 419B
+sym setbaseaddress = 41A9
+sym notZ = 41CC
+sym next1 = 41D2
+sym printglyph = 41E4
+sym maxh = 422D
+sym maxv = 422E
+sym rowcnt = 422F
+sym line = 4230
+sym dataptr = 4231
+sym gindex = 4233
+sym gindexcnt = 4235
+sym glyphsize = 4237
+sym tempo = 4239
+sym shapes = 423B
+sym hi = 423C
+sym lo = 42FC
+sym numglyph = 43BC
+sym gwidth = 43BE
+sym gheight = 43BF
+sym font = 43C0
+sym shift_tbl = 73C0
+sym ozunid_1 = 73CE
