@@ -38,13 +38,13 @@ calcsize        lda glyphsize
 
 * init vars
 *<bp>
-                lda #topmargin                  ; init top margin
+                lda #topmargin          ; init top margin
                 sta line
                 clc 
                 adc gheight
                 sta maxv
 
-                lda #leftmargin                         ; init left margin
+                lda #leftmargin         ; init left margin
                 sta rowcnt
                 clc
                 adc gwidth
@@ -52,34 +52,35 @@ calcsize        lda glyphsize
 
 *<sym>
 the_glyph
-                lda #<charindex                 ; glyph index in A,X (A = low byte, X = hi byte)
+                lda #<charindex         ; glyph index in A,X (A = low byte, X = hi byte)
                 ldx #>charindex
-                jsr getgaddr                    ; calculte strating address of glyph data 
-                                                ; and make gindex/gindex+1 point to it
+                jsr getgaddr            ; calculte strating address of glyph data 
+                                        ; and make gindex/gindex+1 point to it
                 ;jsr printglyph
                 ;rts
 *<bp>
-                jsr copyglyph                   ; copy glyph data, add 0 at the end of each line
-                jsr shift                       ; pre shift glyph
+                jsr copyglyph           ; copy glyph data to memory add. gbuffer
+                                        ; add 0 at the end of each line
+                jsr shift               ; pre shift glyph
 
 *<sym>
 shapeindex   
-                lda #topmargin                  ; init top margin
+                lda #topmargin          ; init top margin
                 sta line
 
-indexsh         lda #0                          ; shape # in A
+indexsh         lda #0                  ; shape # in A
 dopsh
-                jsr printshglyph                ; print pre shifted glyph 
+                jsr printshglyph        ; print pre shifted glyph 
 
-nokey           lda kbd		                ; check for key press
-                bpl nokey		        ; if none, continue waiting
-                bit kbdstrb                     ; clear kbd
-                lda indexsh+1                   ; get shape #
+nokey           lda kbd		        ; check for key press
+                bpl nokey               ; if none, continue waiting
+                bit kbdstrb             ; clear kbd
+                lda indexsh+1           ; get shape #
                 inc 
-                cmp #7                          ; = 7 ?
-                beq finprg                      ; yes : exit
-                sta indexsh+1                   ; no : inc
-                jmp shapeindex                  ; and loop
+                cmp #7                  ; = 7 ?
+                beq finprg              ; yes : exit
+                sta indexsh+1           ; no : inc
+                jmp shapeindex          ; and loop
 
 finprg          rts
 
@@ -282,25 +283,26 @@ noinc2
                 rts
 
 
-*<sym>
-getgaddr
+***************************************************************************
 * calcultate base address of the glyph, put it in gindex var
-* gindex = glyph size * gindexcnt/gindexcnt+1                   
-                sta gindexcnt                   ; init counter with glyph #
+* gindex = glyph size * gindexcnt/gindexcnt+1
+*<sym>
+getgaddr                
+                sta gindexcnt           ; init counter with glyph #
                 stx gindexcnt+1
 
                 lda #0 
-                sta gindex                      ; init result
+                sta gindex              ; init result
                 sta gindex+1
 *<sym>
 setbaseaddress
-                lda gindexcnt                   ; test counter
+                lda gindexcnt           ; test counter
                 ora gindexcnt+1
-                beq next1                       ; end of loop
+                beq next1               ; end of loop
 
-                lda glyphsize                   ; get size of a glyph bitmap
+                lda glyphsize           ; get size of a glyph bitmap
                 clc 
-                adc gindex                      ; add it to gl
+                adc gindex              ; add it to gl
                 sta gindex
                 lda glyphsize+1                  
                 adc gindex+1
@@ -315,7 +317,7 @@ notZ            dec gindexcnt
                 jmp setbaseaddress
 *<sym>
 next1
-                lda gindex                      ; add font address offset
+                lda gindex              ; add font address offset
                 clc
                 adc #<font
                 sta gindex
@@ -327,10 +329,11 @@ next1
                 rts
 
 
+***************************************************************************
 *<sym>
 printglyph   
 
-                lda gindex             ; get base address of data in pointer
+                lda gindex              ; get base address of data in pointer
                 sta getbyte+1
                 lda gindex+1
                 sta getbyte+2
@@ -399,11 +402,11 @@ tempo           ds 2
 shapes          ds 1
 
 
-        put lohi
-        put font                ; here is the data, in source format.
+                put lohi
+                put font                ; here is the data, in source format.
 *<m1>
 *<sym>
-shift_tbl                       ; table of shifted glyph address
+shift_tbl                               ; table of shifted glyph address
                 ds 7*2
 
 *<sym>
