@@ -16,15 +16,7 @@ ptr             equ $06
 *** const ***
 topmargin       equ 70
 leftmargin      equ 10
-charindex       equ $0042
-
-* color masks
-purple1         equ $D5                 
-purple2         equ $AA
-green1          equ $AA
-green2          equ $D5
-white1          equ $FF
-white2          equ $FF
+charindex       equ $0040
 
 * calculate a glyph size (in bytes) 
 * glyphsize/glyphsize+1 = gwidth * gheight
@@ -45,6 +37,7 @@ calcsize        lda glyphsize
                 bne calcsize
 
 * init vars
+*<bp>
                 lda #topmargin          ; init top margin
                 sta line
                 clc 
@@ -63,8 +56,10 @@ the_glyph
                 ldx #>charindex
                 jsr getgaddr            ; calculte strating address of glyph data 
                                         ; and make gindex/gindex+1 point to it
-
-                jsr copyglyph           ; copy glyph data to memory address gbuffer
+                ;jsr printglyph
+                ;rts
+*<bp>
+                jsr copyglyph           ; copy glyph data to memory add. gbuffer
                                         ; add 0 at the end of each line
                 jsr shift               ; pre shift glyph
 
@@ -73,25 +68,8 @@ shapeindex
                 lda #topmargin          ; init top margin
                 sta line
 
-setcolor
-* purple
-;                lda #purple1           ; uncomment to set this color (comment others)
-;                sta color1
-;                lda #purple2
-;                sta color2
-* green
-;                lda #green1           ; uncomment to set this color (comment others)
-;                sta color1
-;                lda #green2
-;                sta color2
-* white
-                lda #white1
-                sta color1
-                lda #white2
-                sta color2
-
-indexsh         lda #0                  ; shape # in A
-
+indexsh         lda #0                 ; shape # in A
+dopsh
                 jsr printshglyph        ; print pre shifted glyph 
 
 nokey           lda kbd		        ; check for key press
@@ -101,10 +79,10 @@ nokey           lda kbd		        ; check for key press
                 inc 
                 cmp #7                  ; = 7 ?
                 beq finprg              ; yes : exit
-                sta indexsh+1           ; no : inc shape #
+                sta indexsh+1           ; no : inc
                 jmp shapeindex          ; and loop
 
-finprg          rts                     ; END
+finprg          rts
 
 
 ***************************************************************************
@@ -259,7 +237,6 @@ storbyte0       sta $FFFF
 * input : a = index of shape
 *<sym>
 printshglyph 
-
                 asl                     ; get shape # * 2
                 tax                     ; = offset in shapes table
                 lda shift_tbl,x 
@@ -267,9 +244,6 @@ printshglyph
                 inx 
                 lda shift_tbl,x 
                 sta gdata+2
-
-                lda #0                  ; oddeven is 0 or 1
-                sta oddeven             ; for color1 and color1 masks, depending on column 
 
                 lda maxh                ; + 1 byte for shifting
                 inc
@@ -279,28 +253,16 @@ gdata           lda $FFFF               ; modified load address
                 pha                     ; save data byte
                 
                 ldx line                ; get screen address
-                lda lo,x                ; ptr points to first byte of line of HGR screen
+                lda lo,x 
                 sta ptr
                 lda hi,x 
                 sta ptr+1
 
                 pla                     ; restore data byte
+
                 ldy rowcnt              ; set column (horizontal offset)
-
-*<bp>
-                ldx oddeven             ; set color mask, upon color parity 
-                bne oddcol
-                and color1
-                jmp evencol
-oddcol          and color2
-
-evencol   
-                ;ora (ptr),y            ; uncoment to preserve background               
+                ;ora (ptr),y            ; uncoment o preserve background
                 sta (ptr),y             ; put byte on screen
-
-                lda oddeven
-                eor #1
-                sta oddeven
 
                 inc rowcnt              ; next column
                 inc gdata+1             ; prepare next data byte to load
@@ -311,9 +273,6 @@ noinc2
                 cmp tempo
                 bne gdata               ; no loop to finish row
 
-                lda #0
-                sta oddeven
-
                 lda #leftmargin         ; reset col.
                 sta rowcnt
                 inc line                ; next line 
@@ -322,7 +281,8 @@ noinc2
                 bne gdata               ; no : loop
                       
                 rts
-*
+
+
 ***************************************************************************
 * calcultate base address of the glyph, put it in gindex var
 * gindex = glyph size * gindexcnt/gindexcnt+1
@@ -439,17 +399,9 @@ glyphsize       ds 2
 tempo           ds 2
 
 *<sym>
-oddeven         ds 1
-
-*<sym>
-color1         ds 1
-color2         ds 1
-                
-*<sym>
 shapes          ds 1
 
-*
-*
+
                 put lohi
                 put font                ; here is the data, in source format.
 *<m1>
