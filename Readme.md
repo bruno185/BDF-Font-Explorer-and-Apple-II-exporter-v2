@@ -8,9 +8,9 @@ It also lets you export one or more glyphs in a format that can be easily read b
 
 ## Usage
 Launch the application BDF_Analyser.exe and drag and drop a BDF file onto the window.
-You can fin BDF fonts here :
+I've included some BDF fonts in this archive (see "Some BDF fonts.rar").
+You can also find more BDF fonts here :
 https://github.com/olikraus/u8g2/tree/master/tools/font/bdf
-
 https://github.com/farsil/ibmfonts
 ...
 
