@@ -1,3 +1,11 @@
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+*                        DEMO PROGRAMM                          *
+*            DISPLAYING BDF FONT TRANSLATED FROM WINDOWS ENV.   *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+*   Go to my Git archieve to get Windows program that produce   *
+*             Apple II compatible date from BDF fonts           *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
                 org $4000
                 put equ
 
@@ -19,9 +27,9 @@ leftmargin      equ 10
 charindex       equ $0042
 
 * color masks
-purple1         equ $D5                 
+purple1         equ $D5                 ; or blue             
 purple2         equ $AA
-green1          equ $AA
+green1          equ $AA                 ; or red
 green2          equ $D5
 white1          equ $FF
 white2          equ $FF
@@ -75,23 +83,25 @@ shapeindex
 
 setcolor
 * purple
-;                lda #purple1           ; uncomment to set this color (comment others)
-;                sta color1
-;                lda #purple2
-;                sta color2
+                lda #purple1            ; uncomment to set this color (comment others)
+                sta color1
+                lda #purple2
+                sta color2              
 * green
-;                lda #green1           ; uncomment to set this color (comment others)
-;                sta color1
-;                lda #green2
-;                sta color2
+                lda #green1            ; uncomment to set this color (comment others)
+                sta color1
+                lda #green2
+                sta color2
+                ;jmp colordone
 * white
                 lda #white1
                 sta color1
                 lda #white2
                 sta color2
+colordone
 
+*<bp>
 indexsh         lda #0                  ; shape # in A
-
                 jsr printshglyph        ; print pre shifted glyph 
 
 nokey           lda kbd		        ; check for key press
@@ -269,9 +279,9 @@ printshglyph
                 sta gdata+2
 
                 lda #0                  ; oddeven is 0 or 1
-                sta oddeven             ; for color1 and color1 masks, depending on column 
+                sta oddeven             ; for color1 and color1 masks, depending on column #
 
-                lda maxh                ; + 1 byte for shifting
+                lda maxh                ; +1 byte to make room for shifting
                 inc
                 sta tempo
 
@@ -287,7 +297,6 @@ gdata           lda $FFFF               ; modified load address
                 pla                     ; restore data byte
                 ldy rowcnt              ; set column (horizontal offset)
 
-*<bp>
                 ldx oddeven             ; set color mask, upon color parity 
                 bne oddcol
                 and color1
@@ -298,8 +307,8 @@ evencol
                 ;ora (ptr),y            ; uncoment to preserve background               
                 sta (ptr),y             ; put byte on screen
 
-                lda oddeven
-                eor #1
+                lda oddeven             
+                eor #1                  ; 0 --> 1 or 1 --> 0
                 sta oddeven
 
                 inc rowcnt              ; next column
@@ -311,7 +320,7 @@ noinc2
                 cmp tempo
                 bne gdata               ; no loop to finish row
 
-                lda #0
+                lda #0                  ; reinit oddeven var
                 sta oddeven
 
                 lda #leftmargin         ; reset col.
