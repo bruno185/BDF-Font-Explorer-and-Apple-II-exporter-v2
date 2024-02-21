@@ -16,6 +16,9 @@ https://github.com/olikraus/u8g2/tree/master/tools/font/bdf
 https://github.com/farsil/ibmfonts
 ...
 
+
+Drag and drop a BDF file ovre the application.
+
 Font characters are displayed in the lower part of the window, while the entire file is displayed on the right. Font information is displayed on the left.
 Clicking on a character gives more information about it, displays it in larger size, and displays the corresponding text from the original file on the right.
 
@@ -36,6 +39,7 @@ numglyph hex 6900
 gwidth hex 05   
 gheight hex 22  
 font   
+glyph0
  hex 7F00403F00   
  hex 7800400F00   
  hex 7801400700   
@@ -43,7 +47,15 @@ font
  hex 7801600700   
  hex 7803300700   
  ...   
-
+ glyph1
+ hex 7F00400F00   
+ hex 7800400F00   
+ hex 7801400700   
+ hex 0801600700   
+ hex 0801600700   
+ hex 0803300700 
+ ...
+   
 ## Apple II
 A very simple program is provided to display a glyph on an Apple II. The program is well commented. It is provided as an example to demonstrate the use of exported glyphs.
 Note that the Delphi program "inverts" the bit order of the pixels, to make them conform to the way the Apple II handles the display. So much work that doesn't have to be done by the 65(C)02 or 65816.
