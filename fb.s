@@ -216,7 +216,7 @@ noinc02
 
 ***************************************************************************
 * Copy glyph bitmap data to gbuffer, insert 0 at the end of each line.
-* This 0 byte is needed when glyph is shifted.
+* This extra byte is needed when glyph is shifted.
 *<sym>
 copyglyph
                 lda gindex              ; set glyph input address
