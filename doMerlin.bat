@@ -36,7 +36,7 @@ echo --------------- fin Applecommander ---------------
 
 echo --------------- Debut Applewin ---------------
 SetBreaks.exe
-REM %APPLEWIN% -d1 %PRG%.po
-"C:\Program Files\Crossrunner\Crossrunner.exe" %PRG%.po
+%APPLEWIN% -d1 %PRG%.po
+rem "C:\Program Files\Crossrunner\Crossrunner.exe" %PRG%.po
 rem %APPLEWIN% -h1 %PRG%.po
 echo --------------- Fin Applewin ---------------

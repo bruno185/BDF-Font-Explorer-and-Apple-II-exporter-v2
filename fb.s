@@ -81,6 +81,7 @@ shapeindex
                 lda #topmargin          ; init top margin
                 sta line
 
+*<sym>
 setcolor
 * purple
                 lda #purple1            ; uncomment to set this color (comment others)
@@ -108,7 +109,9 @@ nokey           lda kbd		        ; check for key press
                 bpl nokey               ; if none, continue waiting
                 bit kbdstrb             ; clear kbd
                 lda indexsh+1           ; get shape #
-                inc 
+                clc
+                adc #1
+                ;inc                    ; replaced by 2 previous lines (compatibility) 
                 cmp #7                  ; = 7 ?
                 beq finprg              ; yes : exit
                 sta indexsh+1           ; no : inc shape #
@@ -282,9 +285,11 @@ printshglyph
                 sta oddeven             ; for color1 and color1 masks, depending on column #
 
                 lda maxh                ; +1 byte to make room for shifting
-                inc
+                clc 
+                adc #1
+                ;inc                    ; replaced by 2 previous lines (compatibility)
                 sta tempo
-
+*<sym>
 gdata           lda $FFFF               ; modified load address
                 pha                     ; save data byte
                 
@@ -301,8 +306,10 @@ gdata           lda $FFFF               ; modified load address
                 bne oddcol
                 and color1
                 jmp evencol
+*<sym>
 oddcol          and color2
 
+*<sym>
 evencol   
                 ;ora (ptr),y            ; uncoment to preserve background               
                 sta (ptr),y             ; put byte on screen
@@ -315,6 +322,7 @@ evencol
                 inc gdata+1             ; prepare next data byte to load
                 bne noinc2
                 inc gdata+2
+*<sym>
 noinc2
                 lda rowcnt              ; colomn = leftmargin + glyph width +1 ?
                 cmp tempo
