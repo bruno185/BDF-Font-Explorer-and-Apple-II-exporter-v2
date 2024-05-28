@@ -2,7 +2,7 @@
 
 BDF (Glyph Bitmap Distribution Format) fonts are bitmap fonts created by Adobe a long time ago. Many can be found on the Internet.
 
-Delphi software can read BDF files and explore their contents, including displaying glyphs.
+My Windows software, included in this repository, can read BDF files and explore their content and display glyphs.
 
 It also lets you export one or more glyphs in a format that can be easily read by an Apple II.
 
@@ -23,7 +23,7 @@ Font characters are displayed in the lower part of the window, while the entire 
 Clicking on a character gives more information about it, displays it in larger size, and displays the corresponding text from the original file on the right.
 
 To export one or a series of glyphs in Apple II format, select the range and click on the "Export" button. 
-In the dialog window, choose the format: binary (.bin) or source (.s).
+In the "save as" dialog window, choose the format: binary (.bin) or source (.s).
 
 Binary format: 
 The first two bytes represent the number of glyphs.
