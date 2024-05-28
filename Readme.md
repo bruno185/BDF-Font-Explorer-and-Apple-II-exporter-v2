@@ -6,6 +6,7 @@ My Windows software, included in this repository, can read BDF files and explore
 
 It also lets you export one or more glyphs in a format that can be easily read by an Apple II.
 
+
 ## Usage
 Launch the application BDF_Analyser.exe and drag and drop a BDF file onto the window.
 I've included some BDF fonts in this archive (see "Some BDF fonts.rar").
@@ -15,9 +16,6 @@ https://github.com/olikraus/u8g2/tree/master/tools/font/bdf
 
 https://github.com/farsil/ibmfonts
 ...
-
-
-Drag and drop a BDF file ovre the application.
 
 Font characters are displayed in the lower part of the window, while the entire file is displayed on the right. Font information is displayed on the left.
 Clicking on a character gives more information about it, displays it in larger size, and displays the corresponding text from the original file on the right.
